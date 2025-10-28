@@ -1,0 +1,12 @@
+#!/bin/sh
+# Pré-commit hook para Laravel Pint
+
+echo "🔹 Rodando Laravel Pint..."
+make format-test
+if [ $? -ne 0 ]; then
+  echo "❌ Pint encontrou problemas de formatação. Corrija antes de commitar."
+  exit 1
+fi
+
+echo "✅ Código formatado e analisado com sucesso!"
+exit 0
