@@ -394,17 +394,12 @@ Maria Santos,maria@example.com,98765432100,Rio de Janeiro,RJ
 }
 ```
 
-### Estados Brasileiros Válidos
-```
-AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO
-```
-
 ## 📋 Regras de Validação
 
 ### Funcionário
 - **name**: Obrigatório, string, máximo 255 caracteres
 - **email**: Obrigatório, formato de email válido, máximo 255 caracteres, único
-- **cpf**: Obrigatório, CPF válido, 11 dígitos, único
+- **cpf**: Obrigatório, CPF válido, único
 - **city**: Obrigatório, string, máximo 255 caracteres
 - **state**: Obrigatório, deve ser um estado brasileiro válido (sigla ou nome completo)
 
@@ -413,7 +408,7 @@ AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, 
 - **password**: Obrigatório, string, mínimo 6 caracteres
 
 ### Importação CSV
-- **file**: Obrigatório, arquivo CSV ou TXT, máximo 2MB
+- **file**: Obrigatório, arquivo CSV, máximo 2MB
 
 ## 🔢 Códigos de Status
 
