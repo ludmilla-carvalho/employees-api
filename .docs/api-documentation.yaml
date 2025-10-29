@@ -1,0 +1,619 @@
+openapi: 3.0.0
+info:
+  title: API de Funcionários
+  description: Uma API RESTful para gerenciamento de funcionários com autenticação JWT
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost/api
+    description: Servidor de desenvolvimento
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Autenticação
+      summary: Login do usuário
+      description: Autentica um usuário e retorna um token JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: "usuario@example.com"
+              password: "secret"
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '422':
+          description: Dados de validação inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /auth/me:
+    get:
+      tags:
+        - Autenticação
+      summary: Informações do usuário
+      description: Retorna as informações do usuário autenticado
+      responses:
+        '200':
+          description: Informações do usuário recuperadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/logout:
+    post:
+      tags:
+        - Autenticação
+      summary: Logout do usuário
+      description: Invalida o token JWT atual
+      responses:
+        '200':
+          description: Logout realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Autenticação
+      summary: Renovar token
+      description: Gera um novo token JWT
+      responses:
+        '200':
+          description: Token renovado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /employees:
+    get:
+      tags:
+        - Funcionários
+      summary: Listar funcionários
+      description: Retorna a lista de funcionários do usuário autenticado
+      responses:
+        '200':
+          description: Lista de funcionários recuperada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Funcionários
+      summary: Criar funcionário
+      description: Cria um novo funcionário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+            example:
+              name: "Maria Santos"
+              email: "maria@example.com"
+              cpf: "98765432100"
+              city: "Rio de Janeiro"
+              state: "RJ"
+      responses:
+        '201':
+          description: Funcionário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          description: Dados de validação inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /employees/{id}:
+    get:
+      tags:
+        - Funcionários
+      summary: Visualizar funcionário
+      description: Retorna os dados de um funcionário específico
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID do funcionário
+      responses:
+        '200':
+          description: Funcionário encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Funcionários
+      summary: Atualizar funcionário (PUT)
+      description: Atualiza todos os dados de um funcionário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID do funcionário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+      responses:
+        '200':
+          description: Funcionário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    patch:
+      tags:
+        - Funcionários
+      summary: Atualizar funcionário (PATCH)
+      description: Atualiza parcialmente os dados de um funcionário
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID do funcionário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeUpdateRequest'
+      responses:
+        '200':
+          description: Funcionário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      tags:
+        - Funcionários
+      summary: Excluir funcionário
+      description: Remove um funcionário (soft delete)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID do funcionário
+      responses:
+        '200':
+          description: Funcionário excluído com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /employees/import:
+    post:
+      tags:
+        - Funcionários
+      summary: Importar funcionários
+      description: Importa funcionários a partir de um arquivo CSV
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Arquivo CSV com dados dos funcionários
+              required:
+                - file
+      responses:
+        '202':
+          description: Importação aceita para processamento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "usuario@example.com"
+        password:
+          type: string
+          minLength: 6
+          example: "secret"
+
+    EmployeeRequest:
+      type: object
+      required:
+        - name
+        - email
+        - cpf
+        - city
+        - state
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "João Silva"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: "joao@example.com"
+        cpf:
+          type: string
+          pattern: '^\d{11}$'
+          example: "12345678901"
+        city:
+          type: string
+          maxLength: 255
+          example: "São Paulo"
+        state:
+          type: string
+          enum: [AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO]
+          example: "SP"
+
+    EmployeeUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "João Silva"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: "joao@example.com"
+        cpf:
+          type: string
+          pattern: '^\d{11}$'
+          example: "12345678901"
+        city:
+          type: string
+          maxLength: 255
+          example: "São Paulo"
+        state:
+          type: string
+          enum: [AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN, RS, RO, RR, SC, SP, SE, TO]
+          example: "SP"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Nome do Usuário"
+        email:
+          type: string
+          format: email
+          example: "usuario@example.com"
+        email_verified_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00.000000Z"
+
+    Employee:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "João Silva"
+        email:
+          type: string
+          format: email
+          example: "joao@example.com"
+        cpf:
+          type: string
+          example: "12345678901"
+        city:
+          type: string
+          example: "São Paulo"
+        state:
+          type: string
+          example: "SP"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00.000000Z"
+
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+
+    LoginResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              example: "Login successful"
+            data:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                token_type:
+                  type: string
+                  example: "bearer"
+                expires_in:
+                  type: integer
+                  example: 3600
+                user:
+                  $ref: '#/components/schemas/User'
+
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              example: "User information retrieved successfully"
+            data:
+              $ref: '#/components/schemas/User'
+
+    RefreshResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              example: "Token refreshed successfully"
+            data:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                token_type:
+                  type: string
+                  example: "bearer"
+                expires_in:
+                  type: integer
+                  example: 3600
+
+    EmployeeResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              example: "Employee retrieved successfully"
+            data:
+              $ref: '#/components/schemas/Employee'
+
+    EmployeesResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              example: "Employees retrieved successfully"
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Employee'
+
+    ImportResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              example: "The import of employee data will be processed shortly. You will be notified when it is complete."
+            data:
+              example: null
+
+    SuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            success:
+              example: true
+            message:
+              type: string
+            data:
+              example: null
+
+    ValidationError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "The given data was invalid."
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          example:
+            email: ["The email field is required."]
+            cpf: ["The CPF provided is invalid."]
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+
+  responses:
+    Unauthorized:
+      description: Token não fornecido ou inválido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "Unauthenticated."
+
+    Forbidden:
+      description: Acesso negado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "This action is unauthorized."
+
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "Resource not found."
+
+    ValidationError:
+      description: Erro de validação
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'

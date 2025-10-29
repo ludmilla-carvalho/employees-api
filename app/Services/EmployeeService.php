@@ -170,6 +170,9 @@ class EmployeeService
                 return empty($value) ? null : $value;
             }, $data);
 
+            $data['state'] = $this->getShortStateName($data['state']);
+            $data['cpf'] = preg_replace('/\D/', '', $data['cpf']);
+
             // Data validation
             $lineErrors = $this->validateEmployeeData($data, $actualLineNumber);
 
@@ -236,9 +239,6 @@ class EmployeeService
             'state.required' => 'Estado é obrigatório',
             'state.enum' => 'Estado deve ser um estado brasileiro válido (ex: SP ou São Paulo)',
         ];
-
-        $data['state'] = $this->getShortStateName($data['state']);
-        $data['cpf'] = preg_replace('/\D/', '', $data['cpf']);
 
         $validator = Validator::make($data, $rules, $messages);
 
