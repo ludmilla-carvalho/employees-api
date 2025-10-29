@@ -35,8 +35,8 @@ class StoreEmployeeRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'cpf' => preg_replace('/\D/', '', $this->cpf),
-            'state' => $this->getShortStateName($this->state),
+            'cpf' => $this->cpf ? preg_replace('/\D/', '', $this->cpf) : null,
+            'state' => $this->state ? $this->getShortStateName($this->state) : null,
         ]);
     }
 
