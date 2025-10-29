@@ -17,8 +17,12 @@ class UpdateEmployeeRequest extends FormRequest
         return true;
     }
 
-    protected function getShortStateName(string $state): ?string
+    protected function getShortStateName(?string $state): ?string
     {
+        if ($state === null) {
+            return null;
+        }
+
         if (strlen($state) > 2) {
             $slugState = strtoupper(Str::slug($state, '_'));
             if (in_array($slugState, BrazilianState::getNames())) {
@@ -34,10 +38,19 @@ class UpdateEmployeeRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $this->merge([
-            'cpf' => preg_replace('/\D/', '', $this->cpf),
-            'state' => $this->getShortStateName($this->state),
-        ]);
+        $data = [];
+
+        if ($this->has('cpf') && $this->cpf !== null) {
+            $data['cpf'] = preg_replace('/\D/', '', $this->cpf);
+        }
+
+        if ($this->has('state') && $this->state !== null) {
+            $data['state'] = $this->getShortStateName($this->state);
+        }
+
+        if (! empty($data)) {
+            $this->merge($data);
+        }
     }
 
     /**
@@ -48,11 +61,11 @@ class UpdateEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|max:255|unique:employees,email,'.$this->route('employee')->id,
-            'cpf' => 'sometimes|required|string|cpf|size:11|unique:employees,cpf,'.$this->route('employee')->id,
-            'city' => 'sometimes|required|string|max:255',
-            'state' => ['sometimes', 'required', Rule::enum(BrazilianState::class)],
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255|unique:employees,email,'.$this->route('employee')->id,
+            'cpf' => 'sometimes|string|cpf|size:11|unique:employees,cpf,'.$this->route('employee')->id,
+            'city' => 'sometimes|string|max:255',
+            'state' => ['sometimes', Rule::enum(BrazilianState::class)],
         ];
     }
 
