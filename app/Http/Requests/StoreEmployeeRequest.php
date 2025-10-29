@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\BrazilianState;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreEmployeeRequest extends FormRequest
 {
@@ -15,6 +17,16 @@ class StoreEmployeeRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'cpf' => preg_replace('/\D/', '', $this->cpf),
+        ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -23,11 +35,10 @@ class StoreEmployeeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email',
-            'cpf' => 'required|string|size:11|unique:employees,cpf',
+            'email' => 'required|email|max:255|unique:employees,email',
+            'cpf' => 'required|string|cpf|size:11|max:14|unique:employees,cpf',
             'city' => 'required|string|max:255',
-            'state' => 'required|string|size:2',
-            'user_id' => 'nullable|exists:users,id',
+            'state' => ['required', Rule::enum(BrazilianState::class)],
         ];
     }
 
@@ -40,13 +51,11 @@ class StoreEmployeeRequest extends FormRequest
             'name.required' => 'The name field is required.',
             'email.required' => 'The email field is required.',
             'email.email' => 'Please provide a valid email address.',
-            'email.unique' => 'This email is already taken.',
             'cpf.required' => 'The CPF field is required.',
-            'cpf.size' => 'The CPF must be exactly 11 characters.',
-            'cpf.unique' => 'This CPF is already registered.',
+            'cpf.size' => 'The CPF must be between 11 and 14 characters.',
             'city.required' => 'The city field is required.',
             'state.required' => 'The state field is required.',
-            'state.size' => 'The state must be exactly 2 characters.',
+            'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP, RJ, MG.',
             'user_id.exists' => 'The selected user does not exist.',
         ];
     }

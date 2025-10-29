@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email', 255)->unique();
             $table->string('cpf', 14)->unique();
             $table->string('city', 255);
-            $table->string('state', 255);
+            $table->char('state', 2); // Para armazenar as siglas dos estados (AC, SP, RJ, etc.)
             $table->timestamps();
             $table->softDeletes();
         });

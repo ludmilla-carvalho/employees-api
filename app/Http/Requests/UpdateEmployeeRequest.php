@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\BrazilianState;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -21,15 +23,12 @@ class UpdateEmployeeRequest extends FormRequest
      */
     public function rules(): array
     {
-        $employeeId = $this->route('employee')->id;
-
         return [
             'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:employees,email,'.$employeeId,
-            'cpf' => 'sometimes|required|string|size:11|unique:employees,cpf,'.$employeeId,
+            'email' => 'sometimes|required|email|max:255|unique:employees,email,'.$this->route('employee')->id,
+            'cpf' => 'sometimes|required|string|size:14|unique:employees,cpf,'.$this->route('employee')->id,
             'city' => 'sometimes|required|string|max:255',
-            'state' => 'sometimes|required|string|size:2',
-            'user_id' => 'nullable|exists:users,id',
+            'state' => ['sometimes', 'required', Rule::enum(BrazilianState::class)],
         ];
     }
 
@@ -42,13 +41,11 @@ class UpdateEmployeeRequest extends FormRequest
             'name.required' => 'The name field is required.',
             'email.required' => 'The email field is required.',
             'email.email' => 'Please provide a valid email address.',
-            'email.unique' => 'This email is already taken.',
             'cpf.required' => 'The CPF field is required.',
-            'cpf.size' => 'The CPF must be exactly 11 characters.',
-            'cpf.unique' => 'This CPF is already registered.',
+            'cpf.size' => 'The CPF must be exactly 14 characters.',
             'city.required' => 'The city field is required.',
             'state.required' => 'The state field is required.',
-            'state.size' => 'The state must be exactly 2 characters.',
+            'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state.',
             'user_id.exists' => 'The selected user does not exist.',
         ];
     }

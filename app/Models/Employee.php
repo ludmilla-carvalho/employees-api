@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BrazilianState;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,6 +23,15 @@ class Employee extends Model
         'city',
         'state',
         'user_id',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'state' => BrazilianState::class,
     ];
 
     public function user()
