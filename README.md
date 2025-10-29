@@ -2,16 +2,6 @@
 
 Uma API RESTful para gerenciamento de funcionários construída com Laravel, que oferece autenticação JWT e operações CRUD completas.
 
-## 📋 Índice
-
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Tecnologias Utilizadas](#tecnologias-utilizadas)
-- [Configuração](#configuração)
-- [Autenticação](#autenticação)
-- [Endpoints da API](#endpoints-da-api)
-- [Modelos de Dados](#modelos-de-dados)
-- [Códigos de Status](#códigos-de-status)
-
 ## 🚀 Sobre o Projeto
 
 Esta API permite o gerenciamento completo de funcionários, incluindo:
