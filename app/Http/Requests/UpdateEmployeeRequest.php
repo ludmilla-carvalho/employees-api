@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\BrazilianState;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UpdateEmployeeRequest extends FormRequest
@@ -16,16 +17,27 @@ class UpdateEmployeeRequest extends FormRequest
         return true;
     }
 
+    protected function getShortStateName(string $state): ?string
+    {
+        if (strlen($state) > 2) {
+            $slugState = strtoupper(Str::slug($state, '_'));
+            if (in_array($slugState, BrazilianState::getNames())) {
+                return BrazilianState::{$slugState}->value;
+            }
+        }
+
+        return $state;
+    }
+
     /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('cpf')) {
-            $this->merge([
-                'cpf' => preg_replace('/\D/', '', $this->cpf),
-            ]);
-        }
+        $this->merge([
+            'cpf' => preg_replace('/\D/', '', $this->cpf),
+            'state' => $this->getShortStateName($this->state),
+        ]);
     }
 
     /**
@@ -50,9 +62,9 @@ class UpdateEmployeeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'cpf.cpf' => 'The CPF provided is invalid.',
             'cpf.size' => 'The CPF must be between 11 and 14 characters.',
-            'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP, RJ, MG.',
+            'cpf.cpf' => 'The CPF provided is invalid.',
+            'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP or São Paulo',
         ];
     }
 }

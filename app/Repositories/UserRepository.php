@@ -2,15 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Models\Employee;
+use App\Models\User;
 
-class EmployeeRepository extends BaseRepository
+class UserRepository extends BaseRepository
 {
     /**
      * Get model class name
      */
     protected function getModelClass(): string
     {
-        return Employee::class;
+        return User::class;
     }
 }

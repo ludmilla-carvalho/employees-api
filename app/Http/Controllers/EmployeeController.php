@@ -90,15 +90,12 @@ class EmployeeController extends Controller
     {
         $request->validated();
 
-        // Salva na pasta imports dentro do disco local (storage/app/private/imports)
         $path = $request->file('file')->store('imports', 'local');
-
-        // $delaySeconds = config('employees.job_import_delay', 0);
 
         ProcessEmployeeCsvJob::dispatch($path, Auth::id())
             ->onQueue('default');
 
-        $message = 'Employees import will be processed soon. You will be notified once complete.';
+        $message = 'The import of employee data will be processed shortly. You will be notified when it is complete.';
 
         return ApiResponse::accepted(null, $message);
     }

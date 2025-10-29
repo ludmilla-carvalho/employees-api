@@ -68,6 +68,9 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    /**
+     * Get the employees for the user.
+     */
     public function employees()
     {
         return $this->hasMany(Employee::class);

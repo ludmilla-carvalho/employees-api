@@ -6,6 +6,7 @@ use App\Enums\BrazilianState;
 use App\Models\Employee;
 use App\Models\User;
 use App\Repositories\EmployeeRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -18,7 +19,10 @@ use Illuminate\Validation\Rule;
 
 class EmployeeService
 {
-    public function __construct(protected EmployeeRepository $employeeRepository) {}
+    public function __construct(
+        protected EmployeeRepository $employeeRepository,
+        protected UserRepository $userRepository
+    ) {}
 
     /**
      * Get all employees for the authenticated user (cached in Redis)
@@ -101,7 +105,7 @@ class EmployeeService
      */
     public function processCsvImport(string $filePath, int $userId): array
     {
-        $user = User::find($userId);
+        $user = $this->userRepository->find($userId);
 
         if (! $user) {
             throw new \Exception('Usuário não encontrado');
