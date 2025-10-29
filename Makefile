@@ -6,7 +6,7 @@ EXEC_APP_TTY=docker compose exec -T app
 COMPOSER=$(EXEC_APP) composer
 ARTISAN=$(EXEC_APP) php artisan
 NPM=$(EXEC_APP) npm
-PHPUNIT=$(EXEC_APP) ./vendor/bin/phpunit
+PHPUNIT=$(EXEC_APP) ./vendor/bin/phpunit --coverage-html coverage
 PINT=$(EXEC_APP_TTY) ./vendor/bin/pint
 
 # Comandos principais

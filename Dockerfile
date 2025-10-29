@@ -38,6 +38,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install php extensions
 RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip sockets intl && docker-php-ext-configure gd --with-freetype --with-jpeg && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install PCOV for test coverage
+RUN pecl install pcov \
+    && docker-php-ext-enable pcov \
+    && echo "pcov.enabled=1" >> /usr/local/etc/php/conf.d/pcov.ini \
+    && echo "pcov.directory=/var/www/html" >> /usr/local/etc/php/conf.d/pcov.ini
+
 # Install Redis extension via PECL
 RUN pecl install redis && docker-php-ext-enable redis
 
