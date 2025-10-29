@@ -10,12 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    protected $authService;
-
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
-    }
+    public function __construct(protected AuthService $authService) {}
 
     /**
      * Login user and return JWT token
