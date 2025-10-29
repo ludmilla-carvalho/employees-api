@@ -50,16 +50,9 @@ class UpdateEmployeeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The name field is required.',
-            'email.required' => 'The email field is required.',
-            'email.email' => 'Please provide a valid email address.',
-            'cpf.required' => 'The CPF field is required.',
             'cpf.cpf' => 'The CPF provided is invalid.',
             'cpf.size' => 'The CPF must be between 11 and 14 characters.',
-            'city.required' => 'The city field is required.',
-            'state.required' => 'The state field is required.',
             'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP, RJ, MG.',
-            'user_id.exists' => 'The selected user does not exist.',
         ];
     }
 }

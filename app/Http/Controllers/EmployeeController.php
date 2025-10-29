@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportEmployeeRequest;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Responses\ApiResponse;
+use App\Jobs\ProcessEmployeeCsvJob;
 use App\Models\Employee;
 use App\Services\EmployeeService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
@@ -53,6 +56,9 @@ class EmployeeController extends Controller
         );
     }
 
+    /**
+     * Update the specified employee
+     */
     public function update(UpdateEmployeeRequest $request, Employee $employee): JsonResponse
     {
         $this->authorize('update', $employee);
@@ -75,5 +81,25 @@ class EmployeeController extends Controller
         $this->employeeService->deleteEmployee($employee);
 
         return ApiResponse::deleted('Employee deleted successfully');
+    }
+
+    /**
+     * Import employees from CSV file
+     */
+    public function import(ImportEmployeeRequest $request): JsonResponse
+    {
+        $request->validated();
+
+        // Salva na pasta imports dentro do disco local (storage/app/private/imports)
+        $path = $request->file('file')->store('imports', 'local');
+
+        // $delaySeconds = config('employees.job_import_delay', 0);
+
+        ProcessEmployeeCsvJob::dispatch($path, Auth::id())
+            ->onQueue('default');
+
+        $message = 'Employees import will be processed soon. You will be notified once complete.';
+
+        return ApiResponse::accepted(null, $message);
     }
 }

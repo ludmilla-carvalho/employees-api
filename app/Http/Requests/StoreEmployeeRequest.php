@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\BrazilianState;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class StoreEmployeeRequest extends FormRequest
@@ -16,6 +17,18 @@ class StoreEmployeeRequest extends FormRequest
         return true;
     }
 
+    protected function getShortStateName(string $state): ?string
+    {
+        if (strlen($state) > 2) {
+            $slugState = strtoupper(Str::slug($state, '_'));
+            if (in_array($slugState, BrazilianState::getNames())) {
+                return BrazilianState::{$slugState}->value;
+            }
+        }
+
+        return $state;
+    }
+
     /**
      * Prepare the data for validation.
      */
@@ -23,6 +36,7 @@ class StoreEmployeeRequest extends FormRequest
     {
         $this->merge([
             'cpf' => preg_replace('/\D/', '', $this->cpf),
+            'state' => $this->getShortStateName($this->state),
         ]);
     }
 
@@ -48,16 +62,9 @@ class StoreEmployeeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The name field is required.',
-            'email.required' => 'The email field is required.',
-            'email.email' => 'Please provide a valid email address.',
-            'cpf.required' => 'The CPF field is required.',
             'cpf.size' => 'The CPF must be between 11 and 14 characters.',
             'cpf.cpf' => 'The CPF provided is invalid.',
-            'city.required' => 'The city field is required.',
-            'state.required' => 'The state field is required.',
-            'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP, RJ, MG.',
-            'user_id.exists' => 'The selected user does not exist.',
+            'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP or São Paulo',
         ];
     }
 }

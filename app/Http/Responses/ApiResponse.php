@@ -48,6 +48,14 @@ class ApiResponse
     }
 
     /**
+     * accepted response
+     */
+    public static function accepted($data, string $message = 'Resource accepted successfully'): JsonResponse
+    {
+        return self::success($data, $message, Response::HTTP_ACCEPTED);
+    }
+
+    /**
      * Updated response
      */
     public static function updated($data, string $message = 'Resource updated successfully'): JsonResponse
@@ -93,7 +101,6 @@ class ApiResponse
     public static function validationError(string $message = 'Validation failed', $errors = null): JsonResponse
     {
         $response = [
-            'success' => false,
             'message' => $message,
         ];
 

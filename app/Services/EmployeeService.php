@@ -21,7 +21,7 @@ class EmployeeService
 
         $key = $this->getUserEmployeesCacheKey($userId);
 
-        return Cache::store('redis')->remember($key, config('employees.cache_ttl'), function () use ($userId) {
+        return Cache::remember($key, config('employees.cache_ttl'), function () use ($userId) {
             return $this->employeeRepository->findAllBy('user_id', $userId);
         });
     }
@@ -40,11 +40,28 @@ class EmployeeService
         return $employee;
     }
 
+    /**
+     * Create a new employee for a specific user (used in jobs)
+     */
+    public function createEmployeeForUser(int $userId, array $data): Employee
+    {
+        $data['user_id'] = $userId;
+
+        $employee = $this->employeeRepository->create($data);
+
+        Cache::forget($this->getUserEmployeesCacheKey($userId));
+
+        return $employee;
+    }
+
+    /**
+     * Update an existing employee
+     */
     public function updateEmployee(Employee $employee, array $data): Employee
     {
         $this->employeeRepository->update($employee, $data);
 
-        Cache::store('redis')->forget($this->getUserEmployeesCacheKey($employee->user_id));
+        Cache::forget($this->getUserEmployeesCacheKey($employee->user_id));
 
         return $employee;
     }
@@ -57,12 +74,15 @@ class EmployeeService
         $deleted = $this->employeeRepository->delete($employee);
 
         if ($deleted) {
-            Cache::store('redis')->forget($this->getUserEmployeesCacheKey($employee->user_id));
+            Cache::forget($this->getUserEmployeesCacheKey($employee->user_id));
         }
 
         return $deleted;
     }
 
+    /**
+     * Get the cache key for a user's employees
+     */
     private function getUserEmployeesCacheKey(int $userId): string
     {
         return "user:{$userId}:employees";

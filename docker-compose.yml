@@ -84,28 +84,11 @@ services:
       - db
     networks:
       - appnet
-  
-  # scheduler:
-  #   build: .
-  #   container_name: convenia_scheduler
-  #   command: >
-  #     sh -c "sleep 20 && while true; do
-  #       php artisan schedule:run --verbose --no-interaction;
-  #       sleep 60;
-  #     done"
-  #   volumes:
-  #     - .:/var/www/html
-  #   depends_on:
-  #     - app
-  #     - db
-  #     - redis
-  #   networks:
-  #     - appnet
 
   worker:
     build: .
     container_name: convenia_worker
-    command: php artisan queue:work redis --queue=sales --sleep=1 --tries=3 --timeout=30
+    command: php artisan queue:work redis --queue=default --sleep=1 --tries=3 --timeout=30
     depends_on:
       - redis
       - db
@@ -113,15 +96,19 @@ services:
       - appnet
     volumes:
       - .:/var/www/html
+      
   mailhog:
     image: mailhog/mailhog:latest
     ports:
       - "1025:1025" # SMTP port
       - "8025:8025" # MailHog web UI port
+    networks:
+      - appnet
 
 volumes:
   db_data:
   vendor:
+
 
 networks:
   appnet:

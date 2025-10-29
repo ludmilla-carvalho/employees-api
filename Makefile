@@ -47,9 +47,6 @@ bash:
 restart:
 	docker compose restart app
 
-scheduler:
-	docker compose logs -f scheduler
-
 cache-clear:
 	$(ARTISAN) cache:clear
 	$(ARTISAN) config:clear

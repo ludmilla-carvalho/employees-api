@@ -26,6 +26,7 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{employee}', [EmployeeController::class, 'update']);
         Route::patch('/{employee}', [EmployeeController::class, 'update']);
         Route::delete('/{employee}', [EmployeeController::class, 'destroy']);
+        Route::post('/import', [EmployeeController::class, 'import']);
     });
 });
 
