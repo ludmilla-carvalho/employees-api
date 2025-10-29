@@ -69,32 +69,10 @@ enum BrazilianState: string
     }
 
     /**
-     * Retorna a região do estado
-     */
-    public function getRegion(): string
-    {
-        return match ($this) {
-            self::ACRE, self::AMAPA, self::AMAZONAS, self::PARA, self::RONDONIA, self::RORAIMA, self::TOCANTINS => 'Norte',
-            self::ALAGOAS, self::BAHIA, self::CEARA, self::MARANHAO, self::PARAIBA, self::PERNAMBUCO, self::PIAUI, self::RIO_GRANDE_DO_NORTE, self::SERGIPE => 'Nordeste',
-            self::DISTRITO_FEDERAL, self::GOIAS, self::MATO_GROSSO, self::MATO_GROSSO_DO_SUL => 'Centro-Oeste',
-            self::ESPIRITO_SANTO, self::MINAS_GERAIS, self::RIO_DE_JANEIRO, self::SAO_PAULO => 'Sudeste',
-            self::PARANA, self::RIO_GRANDE_DO_SUL, self::SANTA_CATARINA => 'Sul',
-        };
-    }
-
-    /**
      * Retorna todos os valores possíveis como array
      */
     public static function getValues(): array
     {
         return array_column(self::cases(), 'value');
-    }
-
-    /**
-     * Retorna todos os estados de uma região específica
-     */
-    public static function getByRegion(string $region): array
-    {
-        return array_filter(self::cases(), fn ($state) => $state->getRegion() === $region);
     }
 }

@@ -17,6 +17,7 @@ class EmployeeException extends Exception
             Response::HTTP_NOT_FOUND => ApiResponse::notFound($this->getMessage()),
             Response::HTTP_UNPROCESSABLE_ENTITY => ApiResponse::validationError($this->getMessage()),
             Response::HTTP_CONFLICT => ApiResponse::error($this->getMessage(), Response::HTTP_CONFLICT),
+            Response::HTTP_FORBIDDEN => ApiResponse::forbidden($this->getMessage()),
             default => ApiResponse::error($this->getMessage(), $statusCode),
         };
     }

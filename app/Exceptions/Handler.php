@@ -88,7 +88,7 @@ class Handler extends ExceptionHandler
         }
 
         // Handle custom exceptions
-        if ($e instanceof AuthException) {
+        if ($e instanceof AuthException || $e instanceof EmployeeException) {
             return $e->render($request);
         }
 

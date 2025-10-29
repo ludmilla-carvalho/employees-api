@@ -13,4 +13,9 @@ class EmployeeRepository extends BaseRepository
     {
         return Employee::class;
     }
+
+    public function createEmployee(array $data): Employee
+    {
+        return $this->model->create($data);
+    }
 }

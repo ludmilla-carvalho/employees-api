@@ -21,7 +21,7 @@ class EmployeeResource extends JsonResource
             'cpf' => $this->cpf,
             'city' => $this->city,
             'state' => $this->state,
-            'user' => new UserResource($this->whenLoaded('user')),
+            'user_id' => $this->user_id,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

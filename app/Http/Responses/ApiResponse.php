@@ -13,7 +13,6 @@ class ApiResponse
     public static function success($data = null, string $message = 'Success', int $statusCode = Response::HTTP_OK): JsonResponse
     {
         $response = [
-            'success' => true,
             'message' => $message,
         ];
 
@@ -30,7 +29,6 @@ class ApiResponse
     public static function error(string $message = 'Error', int $statusCode = Response::HTTP_BAD_REQUEST, $data = null): JsonResponse
     {
         $response = [
-            'success' => false,
             'message' => $message,
         ];
 

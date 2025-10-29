@@ -40,7 +40,7 @@ class EmployeeFactory extends Factory
             'user_id' => User::factory(),
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'cpf' => $this->faker->cpf(false).PHP_EOL,
+            'cpf' => preg_replace('/\D/', '', $this->faker->cpf()),
             'city' => $this->faker->city(),
             'state' => $this->faker->randomElement(BrazilianState::cases())->value,
         ];

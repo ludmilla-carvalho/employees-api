@@ -53,6 +53,7 @@ class StoreEmployeeRequest extends FormRequest
             'email.email' => 'Please provide a valid email address.',
             'cpf.required' => 'The CPF field is required.',
             'cpf.size' => 'The CPF must be between 11 and 14 characters.',
+            'cpf.cpf' => 'The CPF provided is invalid.',
             'city.required' => 'The city field is required.',
             'state.required' => 'The state field is required.',
             'state.enum' => 'The selected state is invalid. Please select a valid Brazilian state. EX: SP, RJ, MG.',

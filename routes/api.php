@@ -20,7 +20,12 @@ Route::middleware('auth:api')->group(function () {
 
     // Employee routes
     Route::prefix('employees')->group(function () {
+        Route::get('/', [EmployeeController::class, 'index']);
         Route::post('/', [EmployeeController::class, 'store']);
+        Route::get('/{employee}', [EmployeeController::class, 'show']);
+        Route::put('/{employee}', [EmployeeController::class, 'update']);
+        Route::patch('/{employee}', [EmployeeController::class, 'update']);
+        Route::delete('/{employee}', [EmployeeController::class, 'destroy']);
     });
 });
 
